@@ -1,0 +1,83 @@
+Lab 2: SQL Injection - Login Bypass
+Platform: PortSwigger Web Security Academy
+Level: Apprentice
+Category: SQL Injection
+Status: ✅ Solved
+
+Objective
+Bypass the login form and gain access to the administrator account without knowing the password.
+
+Vulnerability
+The login form passed username directly into a SQL query without sanitization, allowing the WHERE clause to be manipulated.
+Vulnerable Query (backend):
+sqlSELECT * FROM users WHERE username = 'admin' AND password = 'wrongpassword'
+
+Steps to Solve
+
+Opened the login page
+In the username field, entered:
+
+administrator'--
+
+Left the password field blank (or any value)
+The backend query became:
+
+sqlSELECT * FROM users WHERE username = 'administrator'--' AND password = ''
+
+The -- commented out the password check entirely
+Logged in as administrator successfully ✅
+
+
+Tool Used
+
+Browser (manual input)
+Burp Suite (to observe the request)
+
+
+Impact
+Critical — Complete authentication bypass. Attacker can log in as any user including admin without knowing the password.
+
+Remediation
+
+Use parameterized queries
+Platform: PortSwigger Web Security Academy
+Level: Apprentice
+Category: SQL Injection
+Status: ✅ Solved
+
+Objective
+Bypass the login form and gain access to the administrator account without knowing the password.
+
+Vulnerability
+The login form passed username directly into a SQL query without sanitization, allowing the WHERE clause to be manipulated.
+Vulnerable Query (backend):
+sqlSELECT * FROM users WHERE username = 'admin' AND password = 'wrongpassword'
+
+Steps to Solve
+
+Opened the login page
+In the username field, entered:
+
+administrator'--
+
+Left the password field blank (or any value)
+The backend query became:
+
+sqlSELECT * FROM users WHERE username = 'administrator'--' AND password = ''
+
+The -- commented out the password check entirely
+Logged in as administrator successfully ✅
+
+
+Tool Used
+
+Browser (manual input)
+Burp Suite (to observe the request)
+
+
+Impact
+Critical — Complete authentication bypass. Attacker can log in as any user including admin without knowing the password.
+
+Remediation
+
+Use parameterized queries
